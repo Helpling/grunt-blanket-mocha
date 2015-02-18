@@ -297,7 +297,6 @@ module.exports = function(grunt) {
         // Hijack console.log to capture reporter output
         var dest = this.data.dest;
         // coverage object
-        var coverageReport = this.data.coverage;
         var coverage = {
             modules: []
         };
@@ -510,8 +509,8 @@ module.exports = function(grunt) {
                     };
                     
                     // write report to report file
-                    if (coverageReport) {
-                        grunt.file.write(coverageReport, JSON.stringify(coverage));
+                    if (options.coverageReport) {
+                        grunt.file.write(options.coverageReport, JSON.stringify(coverage));
                     }
 
                     if (!ok) {
