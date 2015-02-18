@@ -296,6 +296,11 @@ module.exports = function(grunt) {
 
         // Hijack console.log to capture reporter output
         var dest = this.data.dest;
+        // coverage object
+        var coverageReport = this.data.coverage;
+        var coverage = {
+            modules: []
+        };
         var output = [];
         var consoleLog = console.log;
         // Latest mocha xunit reporter sends to process.stdout instead of console
@@ -444,7 +449,11 @@ module.exports = function(grunt) {
                                     if (customModuleThreshold[thisModuleName]) {
                                         threshold = customModuleThreshold[thisModuleName];
                                     }
-
+                                    coverage.modules.push({
+                                        "moduleName": thisModuleName,
+                                        "numCovered": moduleTotalCovSt,
+                                        "numTotal": moduleTotalSt
+                                    });
                                     printPassFailMessage(thisModuleName, moduleTotalCovSt, moduleTotalSt, threshold, /*printPassing*/true);
                                 }
                             }
@@ -489,6 +498,20 @@ module.exports = function(grunt) {
 
                         grunt.log.write(failMsg.red);
                         grunt.log.writeln();
+                    }
+
+                    // global stats
+                    coverage.global = {
+                        coveredLines: totals.coveredLines, 
+                        totalLines: totals.totalLines,
+                        test: stats.tests,
+                        failures: stats.failures,
+                        duration: stats.duration
+                    };
+                    
+                    // write report to report file
+                    if (coverageReport) {
+                        grunt.file.write(coverageReport, JSON.stringify(coverage));
                     }
 
                     if (!ok) {
